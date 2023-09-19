@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -91,7 +92,18 @@ class _ProfilesState extends State<Profiles> {
             ),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(newValue),
+            onPressed: () async {
+              String formattedField = formatFieldName(field);
+              log('formattedField $formattedField');
+              if (newValue.trim().isNotEmpty) {
+                await usersCollection
+                    .doc(currentUser.email)
+                    .update({formattedField: newValue});
+                if (mounted) {
+                  Navigator.of(context).pop();
+                }
+              }
+            },
             child: Text(
               'Save',
               style: GoogleFonts.poppins(color: Colors.white),
@@ -100,11 +112,21 @@ class _ProfilesState extends State<Profiles> {
         ],
       ),
     );
-    // ignore: prefer_is_empty
+  }
 
-    if (newValue.trim().isNotEmpty) {
-      await usersCollection.doc(currentUser.email).update({field: newValue});
-    }
+  String formatFieldName(String input) {
+    // Split the input string by spaces
+    List<String> words = input.split(' ');
+
+    // Capitalize the first word and convert the rest to lowercase
+    String formatted = words[0].toLowerCase() +
+        words
+            .skip(1)
+            .map((word) =>
+                word[0].toUpperCase() + word.substring(1).toLowerCase())
+            .join('');
+
+    return formatted;
   }
 
   @override
