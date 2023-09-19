@@ -10,7 +10,6 @@ import 'package:one_payment/pages/register_page.dart';
 import 'package:one_payment/utilities/profile.dart';
 
 import 'package:one_payment/utilities/text_input_decoration.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,12 +19,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  @override
-  void initState() {
-    getPrefInstance();
-    super.initState();
-  }
-
   final formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
@@ -36,12 +29,6 @@ class _LoginPageState extends State<LoginPage> {
   User? user;
   String wrongEmail = 'Wrong email';
   String wrongPassword = 'Wrong Password';
-
-  late SharedPreferences _pref;
-
-  getPrefInstance() async {
-    _pref = await SharedPreferences.getInstance();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,10 +153,6 @@ class _LoginPageState extends State<LoginPage> {
                                         password: _passwordController.text);
                                 user = userCredential.user;
                                 if (user != null) {
-                                  _pref.setString(
-                                    'email',
-                                    _emailController.text,
-                                  );
                                   nextScreenReplace(context, const Profiles());
                                 } else {}
                                 setState(() {
